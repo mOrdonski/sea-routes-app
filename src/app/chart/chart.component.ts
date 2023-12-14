@@ -6,13 +6,14 @@ import {
   OnChanges,
   Output,
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { EChartsOption } from 'echarts';
 import { NgxEchartsDirective, provideEcharts } from 'ngx-echarts';
 
 @Component({
   selector: 'app-chart',
   standalone: true,
-  imports: [CommonModule, NgxEchartsDirective],
+  imports: [CommonModule, NgxEchartsDirective, MatIconModule],
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss'],
   providers: [provideEcharts()],
