@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import * as L from 'leaflet';
 import { filter, map, Subject, switchMap } from 'rxjs';
 
+import { ChartComponent } from '../chart/chart.component';
 import { SelectRouteComponent } from '../select-route/select-route.component';
 import { RouteDto } from '../shared/interfaces/route.dto';
 import { SelectRouteDto } from '../shared/interfaces/selectRoute.dto';
@@ -11,7 +18,7 @@ import { RoutesService } from '../shared/services/get-route-service';
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule, SelectRouteComponent],
+  imports: [CommonModule, SelectRouteComponent, ChartComponent],
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
@@ -22,6 +29,9 @@ export class MapComponent implements AfterViewInit {
   private centroid: L.LatLngExpression = [0, 0];
   private layerGroup = new L.FeatureGroup();
 
+  chartCategories: WritableSignal<string[]> = signal<string[]>([]);
+  chartData: WritableSignal<number[]> = signal<number[]>([]);
+
   selectedRoute$: Subject<number> = new Subject<number>();
 
   drawRoute$ = this.selectedRoute$.pipe(
@@ -29,6 +39,7 @@ export class MapComponent implements AfterViewInit {
     filter(Boolean),
     map((route: RouteDto) => {
       this.clearCurrentLayers();
+      this.createChartData(route);
       this.createNewRoute(route);
       this.centerMapToRoute();
     })
@@ -90,6 +101,27 @@ export class MapComponent implements AfterViewInit {
       const [lng, lat, time, speed] = point;
       const color = speed > meanSpeed ? 'green' : 'red';
       return [lat, lng, color];
+    });
+  }
+
+  createChartData(route: RouteDto): void {
+    this.chartCategories.set(this.getChartCategories(route));
+    this.chartData.set(this.getChartData(route));
+  }
+
+  getChartCategories(route: RouteDto): string[] {
+    return route.points.map((point: number[]) => {
+      const [lng, lat, time, speed] = point;
+      const date = new Date(time).toLocaleDateString('pl-PL').toString();
+
+      return date;
+    });
+  }
+
+  getChartData(route: RouteDto): number[] {
+    return route.points.map((point: number[]) => {
+      const [lng, lat, time, speed] = point;
+      return speed;
     });
   }
 

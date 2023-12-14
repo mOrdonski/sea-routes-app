@@ -2,4 +2,8 @@
 
 <div id="map"></div>
 
+<app-chart [categories]="chartCategories()" [data]="chartData()">
+</app-chart>
+
+
 <ng-container *ngIf="drawRoute$ | async" />

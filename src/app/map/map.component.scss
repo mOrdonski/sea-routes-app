@@ -7,3 +7,13 @@
   background-color: lightblue;
   z-index: 1;
 }
+
+app-chart {
+  position: fixed;
+  background-color: white;
+  border-radius: 1%;
+  bottom: 0;
+  right: 0;
+  width: 50%;
+  z-index: 3;
+}
