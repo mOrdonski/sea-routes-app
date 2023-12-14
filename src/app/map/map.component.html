@@ -1,3 +1,5 @@
 <app-select-route (routeChanged)="selectedRouteChanged($event)" />
 
 <div id="map"></div>
+
+<ng-container *ngIf="drawRoute$ | async" />
