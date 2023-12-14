@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component } from '@angular/core';
 import * as L from 'leaflet';
-import { map } from 'rxjs';
+import { map, Subject } from 'rxjs';
 
 import { SelectRouteComponent } from '../select-route/select-route.component';
+import { SelectRouteDto } from '../shared/interfaces/selectRoute.dto';
 
 @Component({
   selector: 'app-map',
@@ -15,6 +16,13 @@ import { SelectRouteComponent } from '../select-route/select-route.component';
 export class MapComponent implements AfterViewInit {
   private map!: L.Map;
   private centroid: L.LatLngExpression = [0, 0];
+
+  selectedRoute$: Subject<number> = new Subject<number>();
+
+  selectedRouteChanged(event: SelectRouteDto): void {
+    const { id } = event;
+    this.selectedRoute$.next(id);
+  }
 
   ngAfterViewInit(): void {
     this.initMap();
