@@ -1,3 +1,14 @@
+mat-icon {
+  position: fixed;
+  transform: scale(2);
+  background-color: white;
+  border-radius: 50%;
+  top: 2rem;
+  right: 2rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
 #map {
   position: fixed;
   top: 0;
@@ -6,4 +17,20 @@
   height: 100%;
   background-color: lightblue;
   z-index: 1;
+}
+
+app-chart {
+  position: fixed;
+  background-color: white;
+  border-radius: 1%;
+  bottom: 0;
+  right: 0;
+  width: 50%;
+  z-index: 3;
+}
+
+@media (max-width: 600px) {
+  app-chart {
+    width: 100%;
+  }
 }

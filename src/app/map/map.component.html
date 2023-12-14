@@ -1,5 +1,12 @@
 <app-select-route (routeChanged)="selectedRouteChanged($event)" />
 
+<button [disabled]="isDisabledShowChartButton()" (click)="toggleShowChart()">
+  <mat-icon aria-hidden="false" aria-label="Chart icon" fontIcon="bar_chart"></mat-icon>
+</button>
+
 <div id="map"></div>
+
+<app-chart *ngIf="showChart()" [categories]="chartCategories()" [data]="chartData()" (closeChart)="toggleShowChart()">
+</app-chart>
 
 <ng-container *ngIf="drawRoute$ | async" />
