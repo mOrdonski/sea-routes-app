@@ -6,6 +6,7 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import * as L from 'leaflet';
 import { filter, map, Subject, switchMap } from 'rxjs';
 
@@ -18,7 +19,7 @@ import { RoutesService } from '../shared/services/get-route-service';
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule, SelectRouteComponent, ChartComponent],
+  imports: [CommonModule, SelectRouteComponent, ChartComponent, MatIconModule],
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
@@ -29,6 +30,8 @@ export class MapComponent implements AfterViewInit {
   private centroid: L.LatLngExpression = [0, 0];
   private layerGroup = new L.FeatureGroup();
 
+  showChart: WritableSignal<boolean> = signal<boolean>(false);
+  isDisabledShowChartButton: WritableSignal<boolean> = signal<boolean>(true);
   chartCategories: WritableSignal<string[]> = signal<string[]>([]);
   chartData: WritableSignal<number[]> = signal<number[]>([]);
 
@@ -42,13 +45,9 @@ export class MapComponent implements AfterViewInit {
       this.createChartData(route);
       this.createNewRoute(route);
       this.centerMapToRoute();
+      this.setDisableChartButton(false);
     })
   );
-
-  centerMapToRoute(): void {
-    const bounds = this.layerGroup.getBounds();
-    this.map.fitBounds(bounds);
-  }
 
   createNewRoute(route: RouteDto) {
     const points = this.getRoutePoints(route);
@@ -75,14 +74,26 @@ export class MapComponent implements AfterViewInit {
     });
   }
 
+  centerMapToRoute(): void {
+    const bounds = this.layerGroup.getBounds();
+    this.map.fitBounds(bounds);
+  }
+
   clearCurrentLayers(): void {
     this.layerGroup.clearLayers();
     this.map.addLayer(this.layerGroup);
   }
 
+  createChartData(route: RouteDto): void {
+    this.chartCategories.set(this.getChartCategories(route));
+    this.chartData.set(this.getChartData(route));
+  }
+
   selectedRouteChanged(event: SelectRouteDto): void {
     if (!event?.id) {
       this.clearCurrentLayers();
+      this.setDisableChartButton(true);
+      this.showChart.set(false);
       this.map.setView(this.centroid, 1);
       return;
     }
@@ -104,11 +115,6 @@ export class MapComponent implements AfterViewInit {
     });
   }
 
-  createChartData(route: RouteDto): void {
-    this.chartCategories.set(this.getChartCategories(route));
-    this.chartData.set(this.getChartData(route));
-  }
-
   getChartCategories(route: RouteDto): string[] {
     return route.points.map((point: number[]) => {
       const [lng, lat, time, speed] = point;
@@ -123,6 +129,14 @@ export class MapComponent implements AfterViewInit {
       const [lng, lat, time, speed] = point;
       return speed;
     });
+  }
+
+  toggleShowChart(): void {
+    this.showChart.set(!this.showChart());
+  }
+
+  setDisableChartButton(value: boolean): void {
+    this.isDisabledShowChartButton.set(value);
   }
 
   ngAfterViewInit(): void {
