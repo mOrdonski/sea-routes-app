@@ -1,1 +1,2 @@
-<ng-select id="ng-select"></ng-select>
+<ng-select id="ng-select" [items]="routes$ | async" bindLabel="label" bindValue="id" [multiple]="false"
+  (change)="this.routeChanged.emit($event);"></ng-select>

@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 
 import { routesMock } from '../data/routes.mock';
 import { RouteDto } from '../interfaces/route.dto';
+import { SelectRouteDto } from '../interfaces/selectRoute.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +18,8 @@ export class RoutesService {
     return of(route);
   }
 
-  getFromToPorts(): Observable<{ from: string; to: string; id: number }[]> {
-    const fromToPorts = routesMock.map((route) => {
+  getRoutes(): Observable<SelectRouteDto[]> {
+    const routes = routesMock.map((route) => {
       return {
         from: route.from_port,
         to: route.to_port,
@@ -27,6 +28,6 @@ export class RoutesService {
       };
     });
 
-    return of(fromToPorts);
+    return of(routes);
   }
 }
