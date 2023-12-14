@@ -3,10 +3,12 @@ import { AfterViewInit, Component } from '@angular/core';
 import * as L from 'leaflet';
 import { map } from 'rxjs';
 
+import { SelectRouteComponent } from '../select-route/select-route.component';
+
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SelectRouteComponent],
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
