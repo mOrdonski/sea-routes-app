@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   inject,
   signal,
@@ -15,6 +16,7 @@ import { SelectRouteComponent } from '../select-route/select-route.component';
 import { RouteDto } from '../shared/interfaces/route.dto';
 import { SelectRouteDto } from '../shared/interfaces/selectRoute.dto';
 import { RoutesService } from '../shared/services/get-route-service';
+import { FeatureGroup } from 'leaflet';
 
 @Component({
   selector: 'app-map',
@@ -22,13 +24,14 @@ import { RoutesService } from '../shared/services/get-route-service';
   imports: [CommonModule, SelectRouteComponent, ChartComponent, MatIconModule],
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements AfterViewInit {
   private readonly routesService = inject(RoutesService);
 
   private map!: L.Map;
   private centroid: L.LatLngExpression = [0, 0];
-  private layerGroup = new L.FeatureGroup();
+  private layerGroup: FeatureGroup = new L.FeatureGroup();
 
   showChart: WritableSignal<boolean> = signal<boolean>(false);
   isDisabledShowChartButton: WritableSignal<boolean> = signal<boolean>(true);
@@ -51,7 +54,7 @@ export class MapComponent implements AfterViewInit {
 
   createNewRoute(route: RouteDto) {
     const points = this.getRoutePoints(route);
-    const polylines = points.map((point: any[], index: number) => {
+    const polylines = points.forEach((point: any[], index: number) => {
       const [lat, lng, color] = point;
       const nextPoint = points[index + 1];
       if (!nextPoint) {
