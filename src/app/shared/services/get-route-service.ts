@@ -15,6 +15,8 @@ export class RoutesService {
     if (!route) {
       return of(null);
     }
+    // set timeout for 3 sec
+    setTimeout(() => {}, 3000);
     return of(route);
   }
 
