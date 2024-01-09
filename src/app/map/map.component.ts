@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import * as L from 'leaflet';
-import { filter, map, Subject, switchMap } from 'rxjs';
+import { filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { ChartComponent } from '../chart/chart.component';
 import { SelectRouteComponent } from '../select-route/select-route.component';
@@ -40,10 +40,10 @@ export class MapComponent implements AfterViewInit {
 
   selectedRoute$: Subject<number> = new Subject<number>();
 
-  drawRoute$ = this.selectedRoute$.pipe(
+  drawRoute$: Observable<RouteDto> = this.selectedRoute$.pipe(
     switchMap((id) => this.routesService.get(id)),
     filter(Boolean),
-    map((route: RouteDto) => {
+    tap((route: RouteDto) => {
       this.clearCurrentLayers();
       this.createChartData(route);
       this.createNewRoute(route);
@@ -52,7 +52,7 @@ export class MapComponent implements AfterViewInit {
     })
   );
 
-  createNewRoute(route: RouteDto) {
+  createNewRoute(route: RouteDto): void {
     const points = this.getRoutePoints(route);
     const polylines = points.forEach((point: any[], index: number) => {
       const [lat, lng, color] = point;
