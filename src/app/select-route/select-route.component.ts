@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { Observable } from 'rxjs';
 
 import { SelectRouteDto } from '../shared/interfaces/selectRoute.dto';
 import { RoutesService } from '../shared/services/get-route-service';
@@ -18,5 +19,5 @@ export class SelectRouteComponent {
 
   private readonly routesService = inject(RoutesService);
 
-  routes$ = this.routesService.getRoutes();
+  routes$: Observable<SelectRouteDto[]> = this.routesService.getRoutes();
 }
